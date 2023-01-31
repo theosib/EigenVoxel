@@ -40,7 +40,7 @@ class Entity extends RenderAgent {
   }
 
   def getCameraPos(): Vector3d = {
-    new Vector3d(ebox.)
+    new Vector3d(ebox.position.x, ebox.position.y + ebox.height * 0.9, ebox.position.z)
   }
 
 
@@ -48,16 +48,16 @@ class Entity extends RenderAgent {
 
 
 
-  override def create(w: Window): Unit = ???
+  override def create(w: Window): Unit = {}
 
   override def destroy(): Unit = {
     Disposer.dispose(render)
     Disposer.dispose(render_alt)
   }
 
-  override def willRender(w: Window): Boolean = ???
+  override def willRender(w: Window): Boolean = false
 
-  override def render(w: Window): Unit = ???
+  override def render(w: Window): Unit = {}
 
   override def resize(w: Window, dim: WindowDimensions): Unit = {
     setProjection(w.getProjectionMatrix)
