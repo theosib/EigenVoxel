@@ -1,0 +1,5 @@
+include:
+  - cube_faces
+  - uniform_cube_texture
+  - cube_collision
+solid-faces: all

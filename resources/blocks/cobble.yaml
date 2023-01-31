@@ -1,0 +1,3 @@
+include:
+  - untextured_cube
+texture: cobble
