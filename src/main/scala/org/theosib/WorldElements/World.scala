@@ -22,6 +22,7 @@ class World {
   // Queue of blocks needing visual update
   var repaintQueue: java.util.Set[BlockPos] = ConcurrentHashMap.newKeySet()
 
+  val entityStore: java.util.Set[Entity] = ConcurrentHashMap.newKeySet()
 
   /**
    * Queue a block update event for this block
@@ -235,12 +236,25 @@ class World {
   def doBlockUpdates(): Unit = {
     val updateNoLoad = swapBlockUpdateQueueNoLoad()
     val updateLoad = swapBlockUpdateQueueLoad()
-    val repaint = swapRepaintQueue()
 
     updateLoad.forEach { pos => getChunk(pos, false).foreach { _.updateBlock(pos) } }
     updateNoLoad.forEach { pos => getChunk(pos, true).foreach { _.updateBlock(pos) } }
-    if (repaint.size() > 0) println(s"Repainting ${repaint.size()} blocks")
-    repaint.forEach { pos => getChunk(pos, true).foreach{ _.repaintBlock(pos) } }
+  }
+
+  def doRepaintEvents(): Unit = {
+    val repaint = swapRepaintQueue()
+    repaint.forEach { pos => getChunk(pos, true).foreach { _.repaintBlock(pos) } }
+  }
+
+  def doGameTickEvents(elapsedTime: Double): Unit = {
+    val chunks = listAllChunks()
+    chunks.foreach { chunk =>
+      chunk.tickAllBlocks()
+    }
+
+    entityStore.forEach { entity =>
+      entity.gameTick(elapsedTime)
+    }
   }
 
   /**
@@ -296,7 +310,7 @@ class World {
       }
       case None =>
     }
-    result
+    result.sort()
   }
 
   /**

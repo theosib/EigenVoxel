@@ -30,7 +30,7 @@ class TestBlock(val camera: CameraModel) extends RenderAgent {
     val viewCenter = GeometryFunctions.worldViewCenter(cameraPos)
 
     meshrenderer = new MeshRenderer(mesh.getTexture)
-    meshrenderer.loadMeshes(mesh_list, pos_list, face_list, 1, viewCenter)
+    meshrenderer.loadMeshes(mesh_list, pos_list.asInstanceOf[Array[Object]], face_list, 1, viewCenter)
 
     shader = new Shader().setVertexCode(vertex_block).setFragmentCode(fragment_block)
     shader.setMat4("view", camera.getViewMatrix(meshrenderer.getViewCenter))

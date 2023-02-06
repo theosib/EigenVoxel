@@ -100,6 +100,8 @@ abstract class BlockImpl {
    */
   def repaintEvent(block: Block): Unit = {}
 
+  def wantsGameTicks(): Boolean = false
+
   /**
    * @return Name of the type of block
    */

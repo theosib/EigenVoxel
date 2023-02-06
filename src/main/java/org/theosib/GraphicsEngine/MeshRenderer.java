@@ -49,7 +49,7 @@ public class MeshRenderer implements Disposable {
         return transSortPosition;
     }
 
-    public void loadMeshes(Mesh[] meshes, BlockPos[] positions, int[] faces, int count, BlockPos viewCenter) {
+    public void loadMeshes(Mesh[] meshes, Object[] positions, int[] faces, int count, BlockPos viewCenter) {
         this.viewCenter = viewCenter;
         System.out.println("Loading meshes " + count);
 
@@ -74,8 +74,10 @@ public class MeshRenderer implements Disposable {
         for (int i=0; i<count; i++) {
             Mesh m = meshes[i];
             int f = faces[i];
-            BlockPos p = positions[i];
-            m.getVertexFloats(vertex_data.getBuffer(), f, p.toVector3d(), viewCenter);
+            Object pi = positions[i];
+            // XXX check type of just index 0?
+            Vector3dc p = (pi instanceof BlockPos) ? ((BlockPos)pi).toVector3d() : (Vector3dc)pi;
+            m.getVertexFloats(vertex_data.getBuffer(), f, p, viewCenter);
             m.getTexcoordFloats(texcoord_data.getBuffer(), f);
             m.getNormalFloats(normal_data.getBuffer(), f);
         }

@@ -1,17 +1,26 @@
 package org.theosib.WorkerThreads
 
+import org.theosib.Adaptors.Window
 import org.theosib.WorldElements.World
 
 class UpdateRepaintThread(val world: World) extends Thread {
   var quitFlag = false;
+  val tickPeriod = 50.0 / 1000.0
 
   override def run(): Unit = {
+    var lastTime: Double = Window.getCurrentTime
     while (!quitFlag) {
-      // XXX Actually get the current time and make sure this wakes every 50ms, regardless of how long the
-      // updates take
-      Thread.sleep(50)
+      val now = Window.getCurrentTime
+      val target = lastTime + tickPeriod
+      val remaining = target - now
+      val elapsed = now - lastTime
+      val sleepTime: Long = ((remaining * 1000).round).max(1)
+      lastTime = now
+      Thread.sleep(sleepTime)
 
       world.doBlockUpdates()
+      world.doRepaintEvents()
+      world.doGameTickEvents(elapsed)
       // world.doLoadSave() // Move this to its own thread
     }
   }

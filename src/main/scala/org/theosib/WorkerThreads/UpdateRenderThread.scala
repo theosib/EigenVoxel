@@ -28,7 +28,7 @@ class UpdateRenderThread(val camera: CameraModel, val view: WorldView) extends T
       doWait()
 //      Thread.sleep(10)
       if (quitFlag) return
-      view.computeChunkRenders(camera)
+      view.computeChunkAndEntityRenders(camera)
     }
   }
 

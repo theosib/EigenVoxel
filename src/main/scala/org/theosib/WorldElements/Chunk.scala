@@ -20,6 +20,7 @@ class Chunk(val world: World, val chunkPos: ChunkPos) {
   private var lastSaveTime: Double = 0
   private var unloadedTime: Double = 0
   private var modified: Boolean = false
+  private var needsTicks: Boolean = false
 
   // Mapping from block index to block ID
   var blockStorage: Array[Short] = new Array[Short](chunkStorageSize)
@@ -28,7 +29,7 @@ class Chunk(val world: World, val chunkPos: ChunkPos) {
   private var meshes: Array[Mesh] = new Array[Mesh](chunkStorageSize)
 
   // Mapping from block type ID number to implementation
-  private val id2impl: ArrayBuffer[BlockImpl] = new ArrayBuffer[BlockImpl](chunkStorageSize)
+  private val id2impl: ArrayBuffer[BlockImpl] = new ArrayBuffer[BlockImpl]()
 
   // Mapping from block type name to block type ID number
   private val name2id: mutable.Map[String,Short] = new mutable.HashMap[String,Short]()
@@ -91,6 +92,7 @@ class Chunk(val world: World, val chunkPos: ChunkPos) {
   /**
    * Each chunk maintains its own mapping from block type to ID so that the numerical representation
    * remains compact. This looks up the ID for a block type, creating a new one if necessary.
+   * TODO: Do locking for new blocks
    * @param name Name of block type
    * @return
    */
@@ -110,6 +112,7 @@ class Chunk(val world: World, val chunkPos: ChunkPos) {
   /**
    * Each chunk maintains its own mapping from block type to ID so that the numerical representation
    * remains compact. This looks up the ID for a block type, creating a new one if necessary.
+   * TODO: Do locking for new blocks
    * @param impl Implementation of block type
    * @return
    */
@@ -198,6 +201,10 @@ class Chunk(val world: World, val chunkPos: ChunkPos) {
     oldBlock.breakEvent()
     // XXX data containers
 
+//    if (oldBlock.getBlockImpl().wantsGameTicks()) {
+//      // XXX recompute whether or not any block needs ticks? Or schedule lazy.
+//    }
+
     val index = oldBlock.getStorageIndex()
     val blockID = getBlockID(name)
 
@@ -206,6 +213,7 @@ class Chunk(val world: World, val chunkPos: ChunkPos) {
 
     if (blockID != 0) {
       val impl = getBlockImpl(index)
+      if (impl.wantsGameTicks()) needsTicks = true
       val block = new Block(this, pos, index, impl)
       block.placeEvent()
       block.repaintEvent()
@@ -264,6 +272,22 @@ class Chunk(val world: World, val chunkPos: ChunkPos) {
     world.repaintBlocks(nonAirBlocks)
   }
 
+  def tickAllBlocks(): Unit = {
+    if (!needsTicks) return;
+
+    for (index <- 0 until chunkStorageSize) {
+      val id = blockStorage(index)
+      if (id != 0) {
+        val impl = id2impl(id)
+        if (impl.wantsGameTicks()) {
+          val pos = indexToBlockPos(index)
+          val block = new Block(this, pos, index, impl)
+          block.tickEvent(-1)
+        }
+      }
+    }
+  }
+
   /**
    * For load and worldgen, set a block. Repaint and update will occur later in bulk.
    * @param pos
@@ -274,6 +298,9 @@ class Chunk(val world: World, val chunkPos: ChunkPos) {
     val blockID = getBlockID(name);
     println(s"ID(${name})=${blockID}")
     blockStorage(index) = blockID.toShort
+
+    if (id2impl(blockID).wantsGameTicks()) needsTicks = true
+
     modified = true
   }
 

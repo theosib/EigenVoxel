@@ -74,7 +74,7 @@ public abstract class Window implements Disposable {
     }
 
     protected double lastProcessTime = -1;
-    protected double getCurrentTime() {
+    public static double getCurrentTime() {
         return System.nanoTime() * 1.0e-9;
     }
 

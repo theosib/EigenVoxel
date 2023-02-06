@@ -30,12 +30,12 @@ class ChunkView(val chunk: Chunk) extends Disposable {
   @volatile var renderIsValid: Boolean = false
 
   // Arrays of mesh renderers
-  var render: ArrayBuffer[MeshRenderer] = new ArrayBuffer[MeshRenderer]()
-  var render_alt: ArrayBuffer[MeshRenderer] = new ArrayBuffer[MeshRenderer]()
+  @volatile var render: ArrayBuffer[MeshRenderer] = new ArrayBuffer[MeshRenderer]()
+  @volatile var render_alt: ArrayBuffer[MeshRenderer] = new ArrayBuffer[MeshRenderer]()
 
   // Arrays of mesh renderer for translucent blocks
-  var trans: ArrayBuffer[MeshRenderer] = new ArrayBuffer[MeshRenderer]()
-  var trans_alt: ArrayBuffer[MeshRenderer] = new ArrayBuffer[MeshRenderer]()
+  @volatile var trans: ArrayBuffer[MeshRenderer] = new ArrayBuffer[MeshRenderer]()
+  @volatile var trans_alt: ArrayBuffer[MeshRenderer] = new ArrayBuffer[MeshRenderer]()
 
   def getTransRenders(): ArrayBuffer[MeshRenderer] = trans
 
@@ -236,7 +236,7 @@ class ChunkView(val chunk: Chunk) extends Disposable {
       }
     }
 
-    mr1.loadMeshes(tmpMeshList, tmpPosList, tmpFaceList, count, viewCenter)
+    mr1.loadMeshes(tmpMeshList, tmpPosList.asInstanceOf[Array[Object]], tmpFaceList, count, viewCenter)
 
     val mr2 = render(index)
     render_alt(index) = mr2;
@@ -274,7 +274,7 @@ class ChunkView(val chunk: Chunk) extends Disposable {
           tmpFaceList(0) = visibleFaces(index)
           val transSortPos = new Vector3d(blockpos.X + 0.5, blockpos.Y + 0.5, blockpos.Z + 0.5)
           render.setTransSortPosition(transSortPos)
-          render.loadMeshes(tmpMeshList, tmpPosList, tmpFaceList, 1, viewCenter)
+          render.loadMeshes(tmpMeshList, tmpPosList.asInstanceOf[Array[Object]], tmpFaceList, 1, viewCenter)
 
           trans_index += 1
         }

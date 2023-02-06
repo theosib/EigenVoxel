@@ -11,16 +11,19 @@ import org.joml.{Matrix4f, Matrix4fc, Vector3dc, Vector3f, Vector3fc, Vector4f}
 import java.util.concurrent.ConcurrentLinkedDeque
 import scala.collection.mutable.ArrayBuffer
 
-class WorldView(world: World, camera: CameraModel) extends RenderAgent {
+class WorldView(val world: World, val camera: CameraModel) extends RenderAgent {
   // XXX keep track of chunk updates and decide not to render when no changes
 
-  var blockShader: Shader = null;
+  def getCamera(): CameraModel = camera
+
+  var blockShader: Shader = null
+  var entityShader: Shader = null
 
   /**
    * Called from UpdateTenderThread, recompute all MeshRenderer objects for all visually updated chunks
    * @param camera
    */
-  def computeChunkRenders(camera: CameraModel): Unit = {
+  def computeChunkAndEntityRenders(camera: CameraModel): Unit = {
     // Get the camera position at the time of computing renders. This will get stored in mesh renderers
     // and used when they're drawn. By then, the camera might have moved a bit, but all the rendering has
     // to be computed relative to the position chosen at this time so that everything shows up in the right place.
@@ -33,6 +36,16 @@ class WorldView(world: World, camera: CameraModel) extends RenderAgent {
       chunkView.setProjectionMatrix(projectionMatrix) // Needed for frustum culling
       chunkView.computeVisualUpdates(viewCenter, viewMatrix)
     }
+
+    val entities = world.entityStore
+    entities.forEach { entity =>
+      entity.setProjectionMatrix(projectionMatrix)
+      entity.computeVisualUpdates(viewCenter, viewMatrix)
+    }
+  }
+
+  def computeEntityRenders(camera: CameraModel): Unit = {
+
   }
 
   /**
@@ -51,6 +64,10 @@ class WorldView(world: World, camera: CameraModel) extends RenderAgent {
     RenderingUtils.enableBlend()
 
     drawTrans(chunks)
+  }
+
+  def drawEntities(): Unit = {
+
   }
 
   /**
@@ -134,7 +151,7 @@ object WorldView {
   def outsideFrustum(transform: Matrix4f, adjustedPos: BlockPos): Int = {
     var result: Int = 0;
 
-    val point = new Vector4f() // XXX Make sure this is only used by one thread
+    val point = new Vector4f()
     val row1 = new Vector4f()
     val row2 = new Vector4f()
     val row3 = new Vector4f()
