@@ -27,8 +27,8 @@ class Block(private val chunk: Chunk, private val pos: BlockPos, private val sto
 
   // XXX Some of these things will later come from the chunk
   def getMesh(): Mesh = chunk.getMesh(storageIndex)
-  def getCollision(): CollisionShape = getMesh().getCollision()
-//  def getHitbox(): CollisionShape = getMesh().getHitbox(chunk)
+  def getCollision(): CollisionShape = impl.getCollision(this)
+//  def getHitbox(): CollisionShape = impl.getHitbox(this)
 
   def hitAction(face: Int): Boolean = impl.hitAction(this, face)
   def useAction(face: Int): Boolean = impl.useAction(this, face)

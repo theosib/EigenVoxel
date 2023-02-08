@@ -67,10 +67,10 @@ class AxisAlignedBox extends Ordered[AxisAlignedBox] {
     val b = new AxisAlignedBox()
     b.neg.x = neg.x + offsetX
     b.neg.y = neg.y + offsetY
-    b.neg.z = neg.z + offsetY
+    b.neg.z = neg.z + offsetZ
     b.pos.x = pos.x + offsetX
     b.pos.y = pos.y + offsetY
-    b.pos.z = pos.z + offsetY
+    b.pos.z = pos.z + offsetZ
     b
   }
 
@@ -100,7 +100,7 @@ class AxisAlignedBox extends Ordered[AxisAlignedBox] {
     val baseZ = neg.z.floor.toInt
     val endX  = pos.x.ceil.toInt
     val endY  = pos.y.ceil.toInt
-    val endZ  = pos.y.ceil.toInt
+    val endZ  = pos.z.ceil.toInt
     for (x <- baseX until endX) {
       for (y <- baseY until endY) {
         for (z <- baseZ until endZ) {
@@ -195,8 +195,9 @@ class AxisAlignedBox extends Ordered[AxisAlignedBox] {
   }
 
 
-
-
+  override def toString: String = {
+    s"AAB(${neg},${pos})"
+  }
 
   override def compare(that: AxisAlignedBox): Int = {
     if (neg.y < that.neg.y) return -1

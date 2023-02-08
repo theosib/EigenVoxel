@@ -257,6 +257,10 @@ class World {
     }
   }
 
+  def addEntity(entity: Entity): Unit = {
+    entityStore.add(entity)
+  }
+
   /**
    * Locate the first block within [limit] distance from [start] in the direction of [forward]
    * @param start

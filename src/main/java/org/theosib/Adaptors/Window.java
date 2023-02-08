@@ -28,6 +28,7 @@ public abstract class Window implements Disposable {
     PriorityList<InputReceiver> inputters = new PriorityList<>();
 
     public void addRenderer(RenderAgent r) {
+        System.out.println("Render adding agent: " + r.getClass().getName());
         renderers.add(r);
         r.resize(this, dim);
     }
@@ -55,19 +56,20 @@ public abstract class Window implements Disposable {
     abstract public void pollInputs();
     abstract public boolean shouldClose();
 
-    public boolean renderAll() {
+    public boolean renderAll(double deltaTime) {
         boolean anyUpdates = false;
         for (RenderAgent r : renderers) {
-            if (r.willRender(this)) {
+            if (r.willRender(this, deltaTime)) {
                 anyUpdates = true;
-                break;
+                // Even if we get true, we don't leave this loop, since some things are fake agents
+                // that use willRender as a way to do some non-visual thing on the render loop.
             }
         }
         if (!anyUpdates) return false;
 
         clearBackground();
         for (RenderAgent r : renderers) {
-            r.render(this);
+            r.render(this, deltaTime);
         }
 
         return true;
@@ -78,14 +80,10 @@ public abstract class Window implements Disposable {
         return System.nanoTime() * 1.0e-9;
     }
 
-    public void processInputsAll(InputState state) {
-        double currentTime = getCurrentTime();
-        if (lastProcessTime < 0) lastProcessTime = currentTime;
-        double deltaTime = Math.min(currentTime - lastProcessTime, 0.008);
+    public void processInputsAll(InputState state, double deltaTime) {
         for (InputReceiver i : inputters) {
             i.process(state, deltaTime);
         }
-        lastProcessTime = currentTime;
     }
 
     boolean do_quit = false;
@@ -94,10 +92,15 @@ public abstract class Window implements Disposable {
     }
 
     public void renderPass() {
-        pollInputs();
-        processInputsAll(getInputState());
+        double currentTime = getCurrentTime();
+        if (lastProcessTime < 0) lastProcessTime = currentTime;
+        double deltaTime = Math.max(currentTime - lastProcessTime, 0.008);
+        lastProcessTime = currentTime;
 
-        if (renderAll()) {
+        pollInputs();
+        processInputsAll(getInputState(), deltaTime);
+
+        if (renderAll(deltaTime)) {
             swapBuffers();
         } else {
             try {

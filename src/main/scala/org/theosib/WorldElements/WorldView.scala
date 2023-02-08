@@ -11,8 +11,12 @@ import org.joml.{Matrix4f, Matrix4fc, Vector3dc, Vector3f, Vector3fc, Vector4f}
 import java.util.concurrent.ConcurrentLinkedDeque
 import scala.collection.mutable.ArrayBuffer
 
-class WorldView(val world: World, val camera: CameraModel) extends RenderAgent {
+class WorldView(val world: World) extends RenderAgent {
   // XXX keep track of chunk updates and decide not to render when no changes
+
+  var camera: CameraModel = null
+
+  def setCamera(camera: CameraModel): Unit = this.camera = camera
 
   def getCamera(): CameraModel = camera
 
@@ -127,9 +131,9 @@ class WorldView(val world: World, val camera: CameraModel) extends RenderAgent {
     blockShader = new Shader().setFragmentCodeFile("block_fragment.glsl").setVertexCodeFile("block_vertex.glsl")
   }
 
-  override def willRender(w: Window): Boolean = true // XXX
+  override def willRender(w: Window, deltaTime: Double): Boolean = true // XXX
 
-  override def render(w: Window): Unit = {
+  override def render(w: Window, deltaTime: Double): Unit = {
     draw()
   }
 

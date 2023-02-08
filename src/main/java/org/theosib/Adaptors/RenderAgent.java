@@ -8,9 +8,9 @@ public interface RenderAgent extends Priority, Disposable {
 
     void destroy();
 
-    boolean willRender(Window w);
+    boolean willRender(Window w, double elapsedTime);
 
-    void render(Window w);
+    void render(Window w, double elapsedTime);
 
     void resize(Window w, WindowDimensions dim);
 }

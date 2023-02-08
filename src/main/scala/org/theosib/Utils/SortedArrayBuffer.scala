@@ -2,7 +2,7 @@ package org.theosib.Utils
 
 import scala.collection.mutable.ArrayBuffer
 
-class SortedArrayBuffer[T <: Ordered[T]] {
+class SortedArrayBuffer[T <: Ordered[T]] extends Iterable[T] {
   val arr = new ArrayBuffer[T]()
 
   def getArray = arr
@@ -58,4 +58,6 @@ class SortedArrayBuffer[T <: Ordered[T]] {
 
     out
   }
+
+  override def iterator: Iterator[T] = arr.iterator
 }

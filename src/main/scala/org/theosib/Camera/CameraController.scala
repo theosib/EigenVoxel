@@ -28,8 +28,6 @@ class CameraController(val model: CameraModel) extends InputReceiver {
     return false;
   }
 
-  val speed = 10;
-
   override def process(state: InputState, timeDelta: Double): Unit = {
     val w = state.isKeyPressed(GLFW.GLFW_KEY_W)
     val s = state.isKeyPressed(GLFW.GLFW_KEY_S)
@@ -49,27 +47,27 @@ class CameraController(val model: CameraModel) extends InputReceiver {
   }
 
   def moveForward(timeDelta: Double): Unit = {
-    model.moveForward(timeDelta * speed);
+    model.moveForward(timeDelta);
   }
 
   def moveBackward(timeDelta: Double): Unit = {
-    model.moveBackward(timeDelta * speed);
+    model.moveBackward(timeDelta);
   }
 
   def moveLeft(timeDelta: Double): Unit = {
-    model.moveLeft(timeDelta * speed);
+    model.moveLeft(timeDelta);
   }
 
   def moveRight(timeDelta: Double): Unit = {
-    model.moveRight(timeDelta * speed);
+    model.moveRight(timeDelta);
   }
 
   def moveUp(timeDelta: Double): Unit = {
-    model.moveUp(timeDelta * speed);
+    model.moveUp(timeDelta);
   }
 
   def moveDown(timeDelta: Double): Unit = {
-    model.moveDown(timeDelta * speed);
+    model.moveDown(timeDelta);
   }
 
   var last_mouse_x: Double = 0

@@ -60,7 +60,7 @@ class Crosshair extends RenderAgent {
     sizeFactor = 0.03f
   }
 
-  override def willRender(w: Window): Boolean = true
+  override def willRender(w: Window, deltaTime: Double): Boolean = true
 
   private def computePoints(): Unit = {
     if (windowDimensions == null) return;
@@ -83,7 +83,7 @@ class Crosshair extends RenderAgent {
     points.put(11, 0);
   }
 
-  override def render(w: Window): Unit = {
+  override def render(w: Window, deltaTime: Double): Unit = {
     handles = RenderingUtils.renderLines(shader, points, 4, handles)
   }
 

@@ -15,9 +15,7 @@ class BlockPos(val X: Int, val Y: Int, val Z: Int) extends Ordered[BlockPos] {
     new ChunkPos(this)
   }
 
-  def toVector3d(): Vector3d = {
-    new Vector3d(X, Y, Z)
-  }
+  lazy val toVector3d = new Vector3d(X, Y, Z)
 
   override def toString: String = {
     s"BlockPos(${X},${Y},${Z})"

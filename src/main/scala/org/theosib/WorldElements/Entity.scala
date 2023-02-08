@@ -12,30 +12,41 @@ import org.theosib.WorldElements.Entity.{max_y_vel, tmpFaceList, tmpMeshList, tm
 import scala.util.control.Breaks.{break, breakable}
 
 class Entity(val world: World, val worldView: WorldView) extends Disposable {
-  var ebox: EntityBox = new EntityBox()
-  var velocity = new Vector3d()
-  var accel = new Vector3d()
-  var gravity: Boolean = false
-  var onGround: Boolean = false
+  protected var ebox: EntityBox = new EntityBox()
+  protected var velocity = new Vector3d()
+  protected var accel = new Vector3d()
+  protected var gravity: Boolean = false
+  protected var onGround: Boolean = false
 
-  var current_pos = new Vector3d()
-  var target_pos = new Vector3d()
-  var start_pos = new Vector3d()
-  var current_time: Double = 0
-  var target_time: Double = 0
-  var start_time: Double = 0
+  protected var current_pos = new Vector3d()
+  protected var target_pos = new Vector3d()
+  protected var current_time: Double = 0
+  protected var target_time: Double = 0
 
-  var yaw: Double = 0
+  protected var yaw: Double = 0
+  protected var pitch: Double = 0
 
-  var visible: Boolean = true
-  var mesh: Mesh = null
+  def getYaw(): Double = yaw
+  def setYaw(y: Double): Unit = {
+    yaw = y
+    visualModified = true
+  }
+  def getPitch(): Double = pitch
+  def setPitch(y: Double): Unit = {
+    pitch = y
+    visualModified = true
+  }
 
-  @volatile var render: MeshRenderer = null
-  @volatile var render_alt: MeshRenderer = null
+  protected var visible: Boolean = true
+  protected var mesh: Mesh = null
 
-  var visualModified: Boolean = false
+  @volatile protected var render: MeshRenderer = null
+  @volatile protected var render_alt: MeshRenderer = null
 
-  var projection: Matrix4fc = null
+  protected var visualModified: Boolean = false
+  def isModified = visualModified
+
+  protected var projection: Matrix4fc = null
 
   def setProjectionMatrix(proj: Matrix4fc): Unit = {
     projection = proj
@@ -195,6 +206,11 @@ class Entity(val world: World, val worldView: WorldView) extends Disposable {
     visualModified = true // optional?
   }
 
+  def setSize(w: Double, h: Double): Unit = {
+    ebox.height = h
+    ebox.width = w
+  }
+
   def setMesh(mesh: Mesh): Unit = {
     this.mesh = mesh
     visualModified = true
@@ -235,15 +251,17 @@ class Entity(val world: World, val worldView: WorldView) extends Disposable {
         val hvel = new Vector3d(velocity.x, 0, velocity.z)
         if (hvel.x > 0.1 || hvel.z > 0.1) hvel.normalize()
         hvel.mul(100)
-        val friction = new Vector3d(-hvel.x * 3, 0, -hvel.z * 3)
+        val friction = new Vector3d(-hvel.x * step, 0, -hvel.z * step)
         if (friction.x.abs > velocity.x.abs) friction.x = -velocity.x
         if (friction.z.abs > velocity.z.abs) friction.z = -velocity.z
         velocity.add(friction)
       }
 
+      velocity.fma(step, accel)
       velocity.y = velocity.y.max(-max_y_vel).min(max_y_vel)
     }
 
+    // XXX calls move even when already on ground. Fix that.
     pos.sub(ebox.position)
     move(pos)
   }
@@ -298,33 +316,38 @@ class Entity(val world: World, val worldView: WorldView) extends Disposable {
     if (!insideFrustum(viewMatrix, viewCenter)) return;
 
     val now = Window.getCurrentTime
-    val elapsed = now - start_time
+    val elapsed = now - current_time
     val togo = target_time - now
+    var offset = new Vector3d()
+
+    println(s"current_time=${current_time} now=${now} target_time=${target_time}")
 
     if (togo > 0) {
       val tmp = new Vector3d()
-      val interpFactor = elapsed / (target_time - start_time)
-      start_pos.lerp(target_pos, interpFactor, current_pos)
+      val interpFactor = elapsed / (target_time - current_time)
+      println(s"interp:${interpFactor}")
+      val pos = new Vector3d()
+      current_pos.lerp(target_pos, interpFactor, pos)
+      pos.sub(target_pos, offset)
+      current_pos = pos
     } else {
       current_pos.set(target_pos)
     }
 
     current_time = now
 
-    val modelMatrix = new Matrix4f().translate(
-      (current_pos.x - target_pos.x).toFloat,
-      (current_pos.x - target_pos.x).toFloat,
-      (current_pos.x - target_pos.x).toFloat)
+    val modelMatrix = new Matrix4f().translate(offset.x.toFloat, offset.y.toFloat, offset.z.toFloat)
     shader.setMat4("view", viewMatrix)
     shader.setMat4("model", modelMatrix)
     mr.draw(shader)
   }
 
-
   def destroy(): Unit = {
     Disposer.dispose(render)
     Disposer.dispose(render_alt)
   }
+
+
 }
 
 

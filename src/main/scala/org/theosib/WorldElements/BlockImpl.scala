@@ -1,5 +1,6 @@
 package org.theosib.WorldElements
 
+import org.joml.Vector3dc
 import org.theosib.Geometry.CollisionShape
 import org.theosib.GraphicsEngine.Mesh
 
@@ -28,29 +29,29 @@ abstract class BlockImpl {
   /**
    * @return Default collision shape according to block config file
    */
-  def getDefaultCollision(): CollisionShape
+  def getDefaultCollision(offset: Vector3dc): CollisionShape
 
   /**
    * Override tis for dynamic collision shape
    * @return
    */
-  def getCollision(chunk: Chunk, index: Int): CollisionShape = {
-    getDefaultCollision()
+  def getCollision(block: Block): CollisionShape = {
+    getDefaultCollision(block.getBlockPos().toVector3d)
   }
 
   /**
    * @return Default hitbox according to block config file
    */
-  def getDefaultHitbox(): CollisionShape = {
-    getDefaultCollision()
+  def getDefaultHitbox(offset: Vector3dc): CollisionShape = {
+    getDefaultCollision(offset)
   }
 
   /**
    * Override this for dynamic hitbox
    * @return
    */
-  def getHitbox(chunk: Chunk, index: Int): CollisionShape = {
-    getDefaultHitbox()
+  def getHitbox(block: Block): CollisionShape = {
+    getDefaultHitbox(block.getBlockPos().toVector3d)
   }
 
   /**

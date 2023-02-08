@@ -41,11 +41,11 @@ class UpdateRenderThread(val camera: CameraModel, val view: WorldView) extends T
   // Abuse the RenderAgent interface to get this thread woken up every video frame
   override def create(w: Window): Unit = {}
   override def destroy(): Unit = {}
-  override def willRender(w: Window): Boolean = {
+  override def willRender(w: Window, deltaTime: Double): Boolean = {
     doNotify()
     false
   }
-  override def render(w: Window): Unit = {}
+  override def render(w: Window, deltaTime: Double): Unit = {}
   override def resize(w: Window, dim: WindowDimensions): Unit = {}
   override def priority(): Int = 1000000
 }

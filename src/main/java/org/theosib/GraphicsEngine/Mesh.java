@@ -53,8 +53,8 @@ public class Mesh {
         solidFaces = sf;
     }
 
-    public CollisionShape getCollision() {
-        return collision;
+    public CollisionShape getCollision(Vector3dc offset) {
+        return collision.offset(offset);
     }
 
     public void setCollision(CollisionShape collision) {
@@ -242,7 +242,8 @@ public class Mesh {
             float x2 = coords[i+3];
             float y2 = coords[i+4];
             float z2 = coords[i+5];
-            collision.append(new AxisAlignedBox(x1, y1, z1, x2, y2, z2));
+            AxisAlignedBox box = new AxisAlignedBox(x1, y1, z1, x2, y2, z2);
+            collision.append(box);
         }
     }
 

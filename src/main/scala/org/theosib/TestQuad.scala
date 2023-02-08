@@ -56,9 +56,9 @@ class TestQuad(val camera: CameraModel) extends RenderAgent {
     Disposer.dispose(shader)
   }
 
-  override def willRender(w: Window): Boolean = true
+  override def willRender(w: Window, deltaTime: Double): Boolean = true
 
-  override def render(w: Window): Unit = {
+  override def render(w: Window, deltaTime: Double): Unit = {
     shader.setMat4("view", camera.getViewMatrix(meshrenderer.getViewCenter))
     meshrenderer.draw(shader)
   }

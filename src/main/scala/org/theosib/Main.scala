@@ -29,13 +29,10 @@ object Main {
   def main(args: Array[String]): Unit = {
     FileLocator.setBaseDir(System.getProperty("user.dir") + "/resources")
 
-    // Setup window, camera, anc camera controller
+    // Setup window
     window = new GLWindow("Voxel Game", 1024, 768)
     window.create()
     window.setFOV(45)
-    camera = new CameraModel(window).setPos(0, 0, 5).setYaw(-90f).setPitch(0)
-    val controller = new CameraController(camera);
-    window.addInputter(controller)
 
     // Anything with GL properties needs to be disposed in the main thread, so we
     // set up the disposer as a RenderAgent
@@ -43,9 +40,21 @@ object Main {
 
     // Create the world and the view of it
     world = new World
-    worldView = new WorldView(world, camera)
+    worldView = new WorldView(world)
+
+    // Setup camera
+    camera = new CameraModel(window, world, worldView).setPos(0, 0, 5).setYaw(-90f).setPitch(0)
+    val controller = new CameraController(camera);
+    window.addInputter(controller)
+
+    // Resolve circular reference between worldView and camera
+    worldView.setCamera(camera)
     worldView.create(window)
     window.addRenderer(worldView)
+
+    camera.getEntity.setGravity(true)
+    window.addRenderer(camera)
+//    world.addEntity(camera.getEntity)
 
     println("Updater thread")
     // Thread that processes block updates and repaint events

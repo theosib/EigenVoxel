@@ -1,5 +1,6 @@
 package org.theosib.Blocks
 
+import org.joml.Vector3dc
 import org.theosib.Geometry.CollisionShape
 import org.theosib.GraphicsEngine.Mesh
 import org.theosib.WorldElements.BlockImpl
@@ -16,7 +17,7 @@ class StaticCubeBlock(val name: String) extends BlockImpl {
   /**
    * @return Default collision shape according to block config file
    */
-  override def getDefaultCollision(): CollisionShape = default_mesh.getCollision
+  override def getDefaultCollision(offset: Vector3dc): CollisionShape = default_mesh.getCollision(offset)
 
   /**
    * @return Name of the type of block
