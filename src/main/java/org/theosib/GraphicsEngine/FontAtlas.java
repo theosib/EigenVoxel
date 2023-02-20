@@ -2,11 +2,9 @@ package org.theosib.GraphicsEngine;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL33;
-import org.lwjgl.stb.STBImageWrite;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryStack;
-import org.theosib.Buffers.StringImageBuffer;
 import org.theosib.Utils.FileLocator;
 import org.theosib.Utils.IOUtil;
 
