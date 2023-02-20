@@ -167,7 +167,7 @@ class ChunkView(val chunk: Chunk) extends Disposable {
    * @param viewCenter
    */
   def computeAllOpaqueRenders(viewCenter: BlockPos): Unit = {
-    val numTex = Texture.numTexures()
+    val numTex = Texture.numTextures()
 
     if (render.length < numTex) {
       renderIsValid = false;

@@ -66,6 +66,8 @@ public class RenderingUtils {
 
     static public void enableBlend() {
         GL33.glEnable(GL33.GL_BLEND);
+        // assumes textures always have pre-multiplied alpha
+        GL33.glBlendFunc(GL33.GL_ONE, GL33.GL_ONE_MINUS_SRC_ALPHA);
     }
 
 }

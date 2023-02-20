@@ -1,21 +1,21 @@
 package org.theosib
 
-import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.LogManager
+//import org.apache.logging.log4j.Logger
+//import org.apache.logging.log4j.LogManager
 import org.theosib.Adaptors.{RenderAgent, Window}
 import org.theosib.Camera.{CameraController, CameraModel}
-import org.theosib.GraphicsEngine.{Face, GLWindow, Mesh, MeshRenderer, Shader, Texture}
+import org.theosib.GraphicsEngine.{Face, FontAtlas, GLWindow, Mesh, MeshRenderer, Shader, Texture}
 import org.theosib.UIElements.Crosshair
 import org.theosib.Utils.{Disposer, FileLocator, WindowDimensions}
 import org.joml.Vector3d
 import org.theosib.Noise.PerlinNoise
 import org.theosib.Parser.ConfigParser
 import org.theosib.Position.BlockPos
-import org.theosib.WorkerThreads.{UpdateRepaintThread, UpdateRenderThread}
+import org.theosib.WorkerThreads.{UpdateRenderThread, UpdateRepaintThread}
 import org.theosib.WorldElements.{World, WorldView}
 
 object Main {
-  private final val logger: Logger = LogManager.getLogger(getClass())
+//  private final val logger: Logger = LogManager.getLogger(getClass())
 
   var world : World = null
   var worldView : WorldView = null
@@ -29,6 +29,9 @@ object Main {
   def main(args: Array[String]): Unit = {
     FileLocator.setBaseDir(System.getProperty("user.dir") + "/resources")
 
+//    val f = new FontAtlas("PixeloidSans.ttf");
+//    System.exit(0);
+
     // Setup window
     window = new GLWindow("Voxel Game", 1024, 768)
     window.create()
@@ -37,6 +40,7 @@ object Main {
     // Anything with GL properties needs to be disposed in the main thread, so we
     // set up the disposer as a RenderAgent
     window.addRenderer(Disposer)
+
 
     // Create the world and the view of it
     world = new World
@@ -54,7 +58,6 @@ object Main {
 
     camera.getEntity.setGravity(true)
     window.addRenderer(camera)
-//    world.addEntity(camera.getEntity)
 
     println("Updater thread")
     // Thread that processes block updates and repaint events
@@ -72,6 +75,12 @@ object Main {
     cross = new Crosshair()
     cross.create(window)
     window.addRenderer(cross)
+
+    println("text test")
+    val testText = new TestText(camera)
+    testText.create(window)
+    window.addRenderer(testText)
+    window.renderLoop()
 
     println("Get block")
     world.getBlock(new BlockPos(0,0,0))

@@ -1,4 +1,4 @@
-package org.theosib.Files
+package org.theosib.Images
 
 import scala.reflect.io.File
 

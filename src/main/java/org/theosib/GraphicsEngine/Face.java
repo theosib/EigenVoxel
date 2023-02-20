@@ -132,7 +132,7 @@ public interface Face {
         private Vector3f normal = null;
         private boolean solid = true;
 
-        static private int[] repeat_indices = {
+        static final private int[] repeat_indices = {
                 0, 1, 2, 0, 2, 3
         };
 

@@ -145,7 +145,6 @@ public class MeshRenderer implements Disposable {
     public void draw(Shader shader) {
         if (total_vertices == 0) return;
 
-//        System.out.println("Drawing " + total_vertices + " vertices");
         loadGLBuffers();
         shader.bind();
         tex.bind();

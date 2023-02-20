@@ -114,7 +114,7 @@ class CameraModel(val window: Window, val world: World, val worldView: WorldView
     recalculate()
     val adjustedPos = new Vector3d()
     val direction = new Vector3d()
-    entity.getCameraPos().sub(viewCenter.toVector3d(), adjustedPos)
+    entity.getCameraPos().sub(viewCenter.toVector3d, adjustedPos)
     adjustedPos.add(cam_front, direction)
     new Matrix4f().lookAt(adjustedPos.x.toFloat, adjustedPos.y.toFloat, adjustedPos.z.toFloat,
       direction.x.toFloat, direction.y.toFloat, direction.z.toFloat,

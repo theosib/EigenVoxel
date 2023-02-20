@@ -96,7 +96,7 @@ abstract class BlockImpl {
   def updateEvent(block: Block): Unit = {}
 
   /**
-   * Handle any reshaping that might occur when neighbors are broken, places, or reshaped
+   * Handle any reshaping that might occur when neighbors are broken, placed, or reshaped
    * @param block
    */
   def repaintEvent(block: Block): Unit = {}

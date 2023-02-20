@@ -22,7 +22,7 @@ class TestQuad(val camera: CameraModel) extends RenderAgent {
 
   override def create(w: Window): Unit = {
     window = w
-    val tex = Texture.lookupTexture("junk")
+    val tex = Texture.autoLoadTexture("junk")
 
     println(s"texw=${tex.getWidth} texh=${tex.getHeight}")
 

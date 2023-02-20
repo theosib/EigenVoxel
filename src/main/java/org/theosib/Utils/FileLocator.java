@@ -11,7 +11,8 @@ public class FileLocator {
         Blocks("blocks"),
         Shader("shaders"),
         Chunk("chunks"),
-        Config("config");
+        Config("config"),
+        Fonts("fonts");
 
         public final String subdir;
 

@@ -84,6 +84,7 @@ public class Shader implements Disposable {
 
     public void bind() {
         compile();
+//        System.out.println("Binding shader " + shaderProgram);
         GL30.glUseProgram(shaderProgram);
     }
 
@@ -107,6 +108,21 @@ public class Shader implements Disposable {
         bind();
         GL33.glUniform1f(GL33.glGetUniformLocation(shaderProgram, name), value);
         return this;
+    }
+
+    public Shader setColor(String name, float[] components) {
+        bind();
+        GL33.glUniform4fv(GL33.glGetUniformLocation(shaderProgram, name), components);
+        return this;
+    }
+
+    public Shader setColor(String name, int color) {
+        float[] components = new float[4];
+        components[0] = ((color >>> 16) & 255) / 255.0f;
+        components[1] = ((color >>> 8) & 255) / 255.0f;
+        components[2] = ((color >>> 0) & 255) / 255.0f;
+        components[3] = ((color >>> 24) & 255) / 255.0f;
+        return setColor(name, components);
     }
 
     public Shader setMat4(String name, Matrix4fc value) {

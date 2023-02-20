@@ -278,7 +278,7 @@ public class Mesh {
                 int face_num = Facing.faceFromName(key.split(":")[1]);
                 parseFaceVertices(face_num, val);
             } else if (key.startsWith("texture")) {
-                tex = Texture.lookupTexture(val);
+                tex = Texture.autoLoadTexture(val);
                 System.out.println("Setting texture " + tex + " for mesh " + this);
                 setTexture(tex);
             } else if (key.startsWith("tex-scale")) {
